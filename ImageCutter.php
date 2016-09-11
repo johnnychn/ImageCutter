@@ -11,6 +11,7 @@ class ImageCutter {
     var $image_url;
     var $ext;
     var $export_ext;
+    var $thumbnail_name='_thumbnail';
 
     function __construct($image_url, $export = null) {
         if (!file_exists($image_url)) {
@@ -131,7 +132,7 @@ class ImageCutter {
 
     public function thumbnail($new_width = 200, $new_height = 200, $quality = 75, $browser = false) {
 
-        $new_name = dirname($this->image_url) . '/' . basename($this->image_url, "." . $this->ext) . '_x.' . $this->export_ext;
+        $new_name = dirname($this->image_url) . '/' . basename($this->image_url, "." . $this->ext) . $this->thumbnail_name.'.' . $this->export_ext;
         copy($this->image_url, $new_name);
 
         if (empty($this->image)) {
@@ -141,19 +142,18 @@ class ImageCutter {
         }
         $w = imagesx($this->image);
         $h = imagesy($this->image);
-        $width = $w;
-        $height = $h;
+
         $nImg = imagecreatetruecolor($new_width, $new_height);
         if ($h / $w > $new_height / $new_width) { //高比较大
-            $width = $new_width;
+
             $height = $h * $new_width / $w;
             $IntNH = $height - $new_height;
-            imagecopyresampled($nImg, $this->image, 0, -$IntNH / 1.8, 0, 0, $new_width, $height, $w, $h);
+            imagecopyresampled($nImg, $this->image, 0, -$IntNH / 2, 0, 0, $new_width, $height, $w, $h);
         } else {  //宽比较大
-            $height = $new_height;
+
             $width = $w * $new_height / $h;
             $IntNW = $width - $new_width;
-            imagecopyresampled($nImg, $this->image, -$IntNW / 1.8, 0, 0, 0, $width, $new_height, $w, $h);
+            imagecopyresampled($nImg, $this->image, -$IntNW / 2, 0, 0, 0, $width, $new_height, $w, $h);
         }
         if ($browser) {
             $this->browser($nImg, $quality);
