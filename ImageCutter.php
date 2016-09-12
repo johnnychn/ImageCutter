@@ -11,7 +11,7 @@ class ImageCutter {
     var $image_url;
     var $ext;
     var $export_ext;
-    var $thumbnail_name='_thumbnail';
+    var $thumbnail_name = '_thumbnail';
 
     function __construct($image_url, $export = null) {
         if (!file_exists($image_url)) {
@@ -27,7 +27,6 @@ class ImageCutter {
             $this->export_ext = strtolower($export);
         }
         $this->createImage();
-
     }
 
     private function createImage() {
@@ -71,11 +70,13 @@ class ImageCutter {
         }
 
         if (!$url) {
-            $url = $this->image_url;
+            $url = $this->output();
         }
 
-        if (!is_writable($url)) {
-            echo 'File(' . $url . ") is unwritable, please check file Permissions";
+        if (file_exists($url)) {
+            if (!is_writable($url)) {
+                echo 'File(' . $url . ") is unwritable, please check file Permissions";
+            }
         }
 
         switch ($this->export_ext) {
@@ -91,6 +92,15 @@ class ImageCutter {
                 break;
         }
 
+    }
+
+    public function output($thumbnail = false) {
+        $thumbnail_name = '';
+        if ($thumbnail == true) {
+            $thumbnail_name = $this->thumbnail_name;
+        }
+        $output = dirname($this->image_url) . '/' . basename($this->image_url, "." . $this->ext) . $thumbnail_name . '.' . $this->export_ext;
+        return $output;
     }
 
     public function resize($new_width = 600, $new_height = 600, $quality = 75, $browser = false) {
@@ -120,19 +130,20 @@ class ImageCutter {
 
         $nImg = imagecreatetruecolor($width, $height);  //新建一个真彩色画布
         imagecopyresampled($nImg, $this->image, 0, 0, 0, 0, $width, $height, $w, $h);//重采样拷贝部分图像并调整大小
-
+        $new_name = $this->output(false);
         if ($browser) {
             $this->browser($nImg, $quality);
         } else {
-            $this->save($nImg, $quality);
+
+            $this->save($nImg, $new_name, $quality);
         }
-        return $this->image_url;
+        return $new_name;
 
     }
 
     public function thumbnail($new_width = 200, $new_height = 200, $quality = 75, $browser = false) {
 
-        $new_name = dirname($this->image_url) . '/' . basename($this->image_url, "." . $this->ext) . $this->thumbnail_name.'.' . $this->export_ext;
+        $new_name = $this->output(true);
         copy($this->image_url, $new_name);
 
         if (empty($this->image)) {
