@@ -31,6 +31,8 @@ class ImageCutter {
 
     private function createImage() {
         $ImgInfo = getimagesize($this->image_url);
+
+
         switch ($ImgInfo[2]) {
             case 1:
                 $this->image = @imagecreatefromgif($this->image_url);
@@ -42,6 +44,23 @@ class ImageCutter {
                 $this->image = @imagecreatefrompng($this->image_url);
                 break;
         }
+        //解决 IOS图片旋转问题
+        $exif = exif_read_data($this->image_url);
+        if (!empty($exif['Orientation'])) {
+            switch ($exif['Orientation']) {
+                case 8:
+                    $this->image = imagerotate($this->image, 90, 0);
+                    break;
+                case 3:
+                    $this->image = imagerotate($this->image, 180, 0);
+                    break;
+                case 6:
+                    $this->image = imagerotate($this->image, -90, 0);
+                    break;
+            }
+        }
+
+
     }
 
 

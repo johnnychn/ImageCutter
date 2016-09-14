@@ -7,7 +7,10 @@ include_once 'ImageCutter.php';
  * Time: 下午10:10
  */
 
-$ic=new ImageCutter('a.jpg','gif');
+echo date('Y-m-d h:i:s',1473845394);
+echo '<br/>';
+
+$ic=new ImageCutter('b.jpg','gif');
 //图片地址,输出的文件格式(默认为原格式)
 $ic->resize(600,600,70);
 echo $ic->output(false).'<br/>';
