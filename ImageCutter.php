@@ -59,6 +59,7 @@ class ImageCutter {
                     break;
             }
         }
+        return $this->image;
 
 
     }
