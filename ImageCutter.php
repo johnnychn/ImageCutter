@@ -11,13 +11,12 @@ class ImageCutter {
     var $image_url;
     var $ext;
     var $export_ext;
-    var $thumbnail_name = '_thumbnail';
+    var $add_name = '_thumbnail';
 
     function __construct($image_url, $export = null) {
         if (!file_exists($image_url)) {
             return false;
         }
-
         @chmod($image_url, 0644);
         $this->image_url = $image_url;
         $this->ext = substr(strrchr($this->image_url, '.'), 1);
@@ -114,12 +113,10 @@ class ImageCutter {
 
     }
 
-    public function output($thumbnail = false) {
-        $thumbnail_name = '';
-        if ($thumbnail == true) {
-            $thumbnail_name = $this->thumbnail_name;
-        }
-        $output = dirname($this->image_url) . '/' . basename($this->image_url, "." . $this->ext) . $thumbnail_name . '.' . $this->export_ext;
+
+    public function output() {
+        $add_name = $this->add_name;
+        $output = dirname($this->image_url) . '/' . basename($this->image_url, "." . $this->ext) . $add_name . '.' . $this->export_ext;
         return $output;
     }
 
@@ -150,7 +147,7 @@ class ImageCutter {
 
         $nImg = imagecreatetruecolor($width, $height);  //新建一个真彩色画布
         imagecopyresampled($nImg, $this->image, 0, 0, 0, 0, $width, $height, $w, $h);//重采样拷贝部分图像并调整大小
-        $new_name = $this->output(false);
+        $new_name = $this->output();
         if ($browser) {
             $this->browser($nImg, $quality);
         } else {
@@ -163,7 +160,7 @@ class ImageCutter {
 
     public function thumbnail($new_width = 200, $new_height = 200, $quality = 75, $browser = false) {
 
-        $new_name = $this->output(true);
+        $new_name = $this->output();
         copy($this->image_url, $new_name);
 
         if (empty($this->image)) {
