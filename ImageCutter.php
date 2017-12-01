@@ -69,6 +69,8 @@ class ImageCutter {
 
         switch ($this->export_ext) {
             case 'jpg':
+            imagejpeg($image, null, $quality);
+            break;
             case 'jpeg':
                 imagejpeg($image, null, $quality);
                 break;
